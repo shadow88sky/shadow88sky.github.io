@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="zh" class="loading">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>typegraphql - 辻字路</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Node.js,"> 
+    <meta name="description" content="安装
+安装主包  12345npm i graphql @types/graphql type-graphql```  * 安装reflect-metadata,用来做类型反射  ```jsnpm ,"> 
+    <meta name="author" content="Chen.Xu"> 
+    <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">辻字路</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">typegraphql</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">typegraphql</h1>
+        <div class="stuff">
+            <span>八月 07, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/TS-GraphQL/">TS,GraphQL</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><ul>
+<li>安装主包  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm i graphql @types/graphql type-graphql</span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string">* 安装reflect-metadata,用来做类型反射  </span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>js</span><br><span class="line">npm i reflect-metadata</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>注意: 我们必须确保该包在我们使用/导入 type-graphql或者我们的resolvers之前引用reflect-metadata,如下  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"reflect-metadata"</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="TypeScript配置"><a href="#TypeScript配置" class="headerlink" title="TypeScript配置"></a>TypeScript配置</h1><ul>
+<li><p>tsconfig.json配置如下选项  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"emitDecoratorMetadata"</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">"experimentalDecorators"</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>因为TypeGraphQL基于Node.js LTS (8, 10) ，它使用了ES7(ES2016)的语法，所以还必须设置  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"target"</span>: <span class="string">"es2016"</span> <span class="comment">// or newer if your node.js version supports this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>由于graphql的订阅依赖AsyncIterator，所以我们还必须配置esnext.asynciterable  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"lib"</span>: [<span class="string">"es2016"</span>, <span class="string">"esnext.asynciterable"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>所有，总结上面的，tsconfig.json需要添加如下选项:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="string">"target"</span>: <span class="string">"es2016"</span>,</span><br><span class="line">    <span class="string">"module"</span>: <span class="string">"commonjs"</span>,</span><br><span class="line">    <span class="string">"lib"</span>: [<span class="string">"es2016"</span>, <span class="string">"esnext.asynciterable"</span>],</span><br><span class="line">    <span class="string">"experimentalDecorators"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="string">"emitDecoratorMetadata"</span>: <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体使用方法可以参考: <a href="https://www.jianshu.com/p/d3d8b861afa6" target="_blank" rel="noopener">Nest-Graphql的使用</a><br>，因为Nest也是基于TypeGraphql开发的，所以基本都差不多。下面介绍些额外的知识。</p>
+<h1 id="部署Graphql-Server"><a href="#部署Graphql-Server" class="headerlink" title="部署Graphql Server"></a>部署Graphql Server</h1><p>因为typegraphql没有单独的部署server的方法，所以我们这里会用到apollo-server-koa(node的框架是koa)</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ApolloServer &#125; <span class="keyword">from</span> <span class="string">'apollo-server-koa'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后创建schema,遍历加载所有的resolver</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建graphql的schema</span></span><br><span class="line"> <span class="keyword">const</span> schema = <span class="keyword">await</span> buildSchema(&#123;</span><br><span class="line">     resolvers: loadResolvers(path.join(__dirname, <span class="string">'resolver'</span>)),</span><br><span class="line">     <span class="comment">// automatically create `schema.gql` file with schema definition in project's working directory</span></span><br><span class="line">     emitSchemaFile: <span class="literal">true</span>,</span><br><span class="line"> &#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 加载所有resolver</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loadResolvers</span>(<span class="params">dirPath: <span class="built_in">string</span></span>): <span class="title">any</span>[] </span>&#123;</span><br><span class="line">    <span class="comment">// tslint:disable-next-line:prefer-const</span></span><br><span class="line">    <span class="keyword">let</span> resolverArr: <span class="built_in">any</span>[] = [];</span><br><span class="line">    <span class="keyword">if</span> (!fs.existsSync(dirPath)) &#123; <span class="keyword">return</span> resolverArr; &#125;</span><br><span class="line">    <span class="keyword">const</span> list = fs.readdirSync(dirPath);</span><br><span class="line">    list.forEach(<span class="function">(<span class="params">filename</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> file = path.join(dirPath, filename);</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">module</span> = require(file);</span><br><span class="line">        Object.keys(<span class="keyword">module</span>).forEach((key) =&gt; &#123;</span><br><span class="line">            resolverArr.push(<span class="keyword">module</span>[key]);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">    return resolverArr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后就是创建server,并且应用于koa的中间件了 </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> server = <span class="keyword">new</span> ApolloServer(&#123;</span><br><span class="line">        schema,</span><br><span class="line">        tracing: <span class="literal">false</span>,</span><br><span class="line">        playground: &#123;</span><br><span class="line">            settings: &#123;</span><br><span class="line">                <span class="string">'request.credentials'</span>: <span class="string">'include'</span>,</span><br><span class="line">            &#125;,</span><br><span class="line">        &#125; <span class="keyword">as</span> any,</span><br><span class="line">        introspection: <span class="literal">true</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">const</span> app = <span class="keyword">new</span> Koa();</span><br><span class="line">    server.applyMiddleware(&#123; app &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>下来就可以通过 监听端口/graphql 访问啦。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>

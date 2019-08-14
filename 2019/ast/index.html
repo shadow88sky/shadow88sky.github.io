@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="zh" class="loading">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ast - 辻字路</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Node.js,"> 
+    <meta name="description" content="最近初学webpack，想学着写个loader出来，结果发现里面的基础只是就是AST(抽象语法树)。它是什么，通俗来说是一种树结构，然后把js语句拆分成一个个零件，放入这棵树中。我们可以修改这棵树的,"> 
+    <meta name="author" content="Chen.Xu"> 
+    <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">辻字路</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">ast</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">ast</h1>
+        <div class="stuff">
+            <span>八月 14, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/杂/">杂</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>最近初学webpack，想学着写个loader出来，结果发现里面的基础只是就是AST(抽象语法树)。它是什么，通俗来说是一种树结构，然后把js语句拆分成一个个零件，放入这棵树中。我们可以修改这棵树的节点，做些调整，再组装起来，就会变成另外的js语句了。<br>而AST当中有许多的对象，下面例举些本文会说到的一些对象，方便理解:  </p>
+<ul>
+<li><p>FunctionDeclaration<br>自定义函数声明节点</p>
+</li>
+<li><p>Identifier<br>自定义标识符节点  </p>
+</li>
+<li><p>blockStatement<br>自定义块语句节点</p>
+</li>
+<li><p>ReturnStatement<br>自定义返回语句节点   </p>
+</li>
+<li><p>BinaryExpression<br>自定义二进制表达式节点</p>
+</li>
+<li><p>variableDeclaration<br>自定义变量声明节点  </p>
+</li>
+<li><p>variableDeclarator<br>自定义变量声明符节点</p>
+</li>
+<li><p>functionExpression<br>自定义函数表达式节点<br>参考:<a href="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API#Node_objects" target="_blank" rel="noopener">AST对象</a>  </p>
+</li>
+</ul>
+<p>我们先来看这么一个函数:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它在AST中是一个FunctionDeclaration对象。下来我们把它拆解成三部分:  </p>
+<ul>
+<li>add: Identifier对象  </li>
+<li>params: Identifier a 和 Identifier b</li>
+<li>body体: BlockStatement对象,也就是{}  </li>
+</ul>
+<p>首先add 是一个Identifier,它没办法拆解了。<br>其次params我们可以拆成Identifier的a和b。<br>最后body里面实际是ReturnStatement对象(return),<br>return里面又是个BinaryExpression对象，<br>BinaryExpression可以拆成</p>
+<ul>
+<li>left: Identifier a</li>
+<li>operation: +  </li>
+<li>right: Identifier b<br>解析图：<br><img src="https://upload-images.jianshu.io/upload_images/18760381-7531f6a9538d456a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></li>
+</ul>
+<p>上面都是我们自己说的，那该怎么去看呢。有个神器包<a href="[https://github.com/benjamn/recast](https://github.com/benjamn/recast)">recast</a>。官网上正好有我们上面的demo演示。 </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> recast = <span class="built_in">require</span>(<span class="string">"recast"</span>);</span><br><span class="line"><span class="keyword">const</span> code = <span class="string">`function add(a, b) &#123;return a + b&#125;`</span></span><br><span class="line"><span class="keyword">const</span> ast = recast.parse(code);</span><br><span class="line"><span class="keyword">const</span> add = ast.program.body[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">console</span>.log(add)</span><br></pre></td></tr></table></figure>
+
+<p>可以看到打印出来:<br><img src="/img/ast/png" alt="ast.png"><br>有兴趣大家可以试试打印add里面的body继续一层层挖掘看看。</p>
+<p>那么我们如何将add这个函数变为匿名式函数说明: const add = function(a,b){return a+b;}   </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> recast = <span class="built_in">require</span>(<span class="string">"recast"</span>);</span><br><span class="line"><span class="keyword">const</span> code = <span class="string">`function add(a, b) &#123;return a + b&#125;`</span></span><br><span class="line"><span class="keyword">const</span> ast = recast.parse(code);</span><br><span class="line"><span class="keyword">const</span> add = ast.program.body[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">console</span>.log(add)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'---------------------------------------'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. 定义AST中的对象</span></span><br><span class="line"><span class="keyword">const</span> &#123; variableDeclaration, variableDeclarator, functionExpression &#125; = recast.types.builders</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.组装</span></span><br><span class="line">ast.program.body[<span class="number">0</span>] = variableDeclaration(<span class="string">"const"</span>, [</span><br><span class="line">    variableDeclarator(add.id, functionExpression(</span><br><span class="line">        <span class="literal">null</span>, <span class="comment">// Anonymize the function expression.</span></span><br><span class="line">        add.params,</span><br><span class="line">        add.body</span><br><span class="line">    ))</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(ast.program.body[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">const</span> output = recast.prettyPrint(ast, &#123; <span class="attr">tabWidth</span>: <span class="number">2</span> &#125;).code</span><br><span class="line"><span class="built_in">console</span>.log(output)</span><br></pre></td></tr></table></figure>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>

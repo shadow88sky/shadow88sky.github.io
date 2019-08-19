@@ -162,7 +162,7 @@ ElasticSearch是面向文档的，文档是所有可搜索数据的最小单位�
 主分片数在索引创建时指定，后续不允许修改，除非Reindex  </code></pre></li>
 <li><p>副本，用以解决数据的高可用的问题。分片是主分片的拷贝  </p>
 <pre><code>副本分片数，可以动态题调整  
-增加副本数，还可以在一定成都上提高服务的可用性(读取的吞吐)</code></pre><p><img src="https://upload-images.jianshu.io/upload_images/18760381-35bb65896ec02935.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>number_of_shards：3   代表主分片数为3<br>number_of_replicas: 1   代表副本数为 1</p>
+增加副本数，还可以在一定成都上提高服务的可用性(读取的吞吐)</code></pre><p><img src="/img/shard.png" alt="image.png"><br>number_of_shards：3   代表主分片数为3<br>number_of_replicas: 1   代表副本数为 1</p>
 </li>
 </ul>
 <h2 id="分片的设定"><a href="#分片的设定" class="headerlink" title="分片的设定"></a>分片的设定</h2><ul>

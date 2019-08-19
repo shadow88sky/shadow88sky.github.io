@@ -98,6 +98,88 @@ ElasticSearch是面向文档的，文档是所有可搜索数据的最小单位�
 <li>ES用来做高性能检索/全文搜索  </li>
 <li>关系型数据库事务/Join</li>
 </ul>
+<h1 id="分布式系统的可用性和扩展性"><a href="#分布式系统的可用性和扩展性" class="headerlink" title="分布式系统的可用性和扩展性"></a>分布式系统的可用性和扩展性</h1><ul>
+<li>高可用性  <ul>
+<li>服务可用性 - 允许有节点停止服务  </li>
+<li>数据可用性 - 部分节点丢失，不会丢失数据  </li>
+</ul>
+</li>
+<li>可扩展性  <ul>
+<li>请求量提升/数据的不断增长(将数据分布到所有节点上)  </li>
+</ul>
+</li>
+<li>ES的分布式架构的好处  <ul>
+<li>存储的水平扩容  </li>
+<li>提高系统的可用性，部分节点停止服务，整个集群的服务不受影响  </li>
+</ul>
+</li>
+<li>ES的分布式架构  <ul>
+<li>不同的集群通过不同的名字来区分，默认名字”elasticsearch”</li>
+<li>通过配置文件修改，或者命令行中 -E cluster.name = xxxx 进行设定  </li>
+<li>一个集群可以有一个或者多个节点  </li>
+</ul>
+</li>
+</ul>
+<h1 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h1><ul>
+<li>节点是一个ES的实例    <ol>
+<li>本质上就是一个java进程  </li>
+<li>一台机器上可以运行多个es进程，但是生产环境一般建议一台机器上只运行一个es实例  </li>
+</ol>
+</li>
+<li>每一个节点都有名字，通过配置文件配置，或者启动时候 -E node.name=node1 指定  </li>
+<li>每一个节点在启动之后，会分配一个UID,保存在data目录下面  </li>
+</ul>
+<h2 id="Master-eligible-nodes-和-Master-Node"><a href="#Master-eligible-nodes-和-Master-Node" class="headerlink" title="Master-eligible nodes 和 Master Node"></a>Master-eligible nodes 和 Master Node</h2><ul>
+<li><p>每个节点启动后，默认就是一个Master eligible节点  </p>
+<pre><code>可以设置node.master:false禁止  </code></pre></li>
+<li><p>Master-eligible节点可以参加选主流程，成为Master节点  </p>
+</li>
+<li><p>当第一个节点启动时候，它会将自己选举成Master节点  </p>
+</li>
+<li><p>每个节点都保存了集群的状态，只有Master节点才能修改集群的状态信息      </p>
+<pre><code>集群状态维护了一个集群中必要的信息:  
+1. 所有的节点信息
+2. 所有的索引和其相关的Mapping和Setting信息  
+3. 分片的路由信息  
+任意节点都能修改信息会导致数据的不一致性。 </code></pre></li>
+</ul>
+<h2 id="Data-Node-amp-Coordinating-Node"><a href="#Data-Node-amp-Coordinating-Node" class="headerlink" title="Data Node &amp; Coordinating Node"></a>Data Node &amp; Coordinating Node</h2><ul>
+<li><p>Data Node  </p>
+<pre><code>可以保存数据的节点。 负责保存分片数据。在数据扩展上起到了至关重要的作用。</code></pre></li>
+<li><p>Coordinating Node  </p>
+<pre><code>负责接受client的请求，将请求分发到合适的节点，最终把结果汇集到一起。
+每个节点默认都起到了Coordinating Node的职责  </code></pre></li>
+</ul>
+<h2 id="其他的节点类型"><a href="#其他的节点类型" class="headerlink" title="其他的节点类型"></a>其他的节点类型</h2><ul>
+<li><p>Hot &amp; Warm Node  </p>
+<pre><code>不同硬件配置的Data Node,用来实现Hot &amp; Warm架构，降低集群部署的成本  </code></pre></li>
+<li><p>Machine Learning Node  </p>
+<pre><code>负责跑机器学习的job，用来做异常检测</code></pre></li>
+</ul>
+<h1 id="分片"><a href="#分片" class="headerlink" title="分片"></a>分片</h1><ul>
+<li><p>主分片，用以解决数据水平扩展的问题。通过主分片，可以将数据分布到集群内的所有节点上  </p>
+<pre><code>一个分片是一个运行的Lucene的实例  
+主分片数在索引创建时指定，后续不允许修改，除非Reindex  </code></pre></li>
+<li><p>副本，用以解决数据的高可用的问题。分片是主分片的拷贝  </p>
+<pre><code>副本分片数，可以动态题调整  
+增加副本数，还可以在一定成都上提高服务的可用性(读取的吞吐)</code></pre><p><img src="https://upload-images.jianshu.io/upload_images/18760381-35bb65896ec02935.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>number_of_shards：3   代表主分片数为3<br>number_of_replicas: 1   代表副本数为 1</p>
+</li>
+</ul>
+<h2 id="分片的设定"><a href="#分片的设定" class="headerlink" title="分片的设定"></a>分片的设定</h2><ul>
+<li>对于生产环境中分片的设定，需要提前做好容量规划  <ol>
+<li>分片数设置过小  <ul>
+<li>导致后续无法增加节点实现水平扩展  </li>
+<li>单个分片的数据量过大，导致数据重新分配耗时  </li>
+</ul>
+</li>
+<li>分片数设置过大  <ul>
+<li>影响搜索结果的相关性打分，影响统计结果的准确性  </li>
+<li>单个节点上过多的分片，会导致资源浪费，同时也会影响性能  </li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">

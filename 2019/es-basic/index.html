@@ -5,12 +5,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Archive: 2019/8</title>
+    <title>es-basic - 辻字路</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Node.js,"> 
-    
+    <meta name="description" content="文档(document)
+ElasticSearch是面向文档的，文档是所有可搜索数据的最小单位。类似关系型数据库中的某张表的一条记录  
+
+文档会被序列化成json来保存。  
+
+每个文档都有一个,"> 
     <meta name="author" content="Chen.Xu"> 
     <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -30,62 +35,101 @@
 <body class="loading">
     <span id="config-title" style="display:none">辻字路</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                    <div class="timeline">
-                      <h2 class="timeline-title">归档: 7篇</h2>
-                      
-                        
-                          <h3 class="timeline-subtitle">2019</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-19</time>
-                          <a target="_self" href="/2019/es-basic/">es-basic</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-16</time>
-                          <a target="_self" href="/2019/install/">Docker安装ES,kibana和Cerebro</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-14</time>
-                          <a target="_self" href="/2019/kibana/">Kibana</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-12</time>
-                          <a target="_self" href="/2019/es-简介/">ElasticSearch - 简介</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-09</time>
-                          <a target="_self" href="/2019/ast/">AST</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-07</time>
-                          <a target="_self" href="/2019/typegraphql/">TypeGraphQL</a>
-                        </div>
-                      
-                    </div>
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">es-basic</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">es-basic</h1>
+        <div class="stuff">
+            <span>八月 19, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="文档-document"><a href="#文档-document" class="headerlink" title="文档(document)"></a>文档(document)</h1><ul>
+<li><p>ElasticSearch是面向文档的，文档是所有可搜索数据的最小单位。<br>类似关系型数据库中的某张表的一条记录  </p>
+</li>
+<li><p>文档会被序列化成json来保存。  </p>
+</li>
+<li><p>每个文档都有一个Unique ID</p>
+<h2 id="文档的元数据"><a href="#文档的元数据" class="headerlink" title="文档的元数据"></a>文档的元数据</h2><p>用来标注文档的相关信息:    </p>
+</li>
+<li><p>_index: 文档所属的索引名</p>
+</li>
+<li><p>_type: 文档所属的类型名  </p>
+</li>
+<li><p>_id: 文档的唯一id  </p>
+</li>
+<li><p>_source: 文档的原始json数据  </p>
+</li>
+<li><p>_version: 文档的版本信息  </p>
+</li>
+<li><p>_score: 相关性打分  </p>
+</li>
+</ul>
+<h1 id="索引-Index"><a href="#索引-Index" class="headerlink" title="索引(Index)"></a>索引(Index)</h1><p>索引是文档的容器，是一类文档的结合<br>类似关系型数据库中的表</p>
+<ul>
+<li>Index体现了逻辑空间的概念: 每个索引都有自己的Mapping定义，用于定义包含的文档的字段名和字段类型  </li>
+<li>Shard体现了物理空间的概念:索引中的数据分散在Shard上<br>Mapping用于定义文档字段类型，Setting用来定义不同的数据分布  </li>
+</ul>
+<h1 id="对比关系型数据库和ES"><a href="#对比关系型数据库和ES" class="headerlink" title="对比关系型数据库和ES"></a>对比关系型数据库和ES</h1><p><img src="/img/es-basic.png" alt="image.png"><br>区别:</p>
+<ul>
+<li>ES用来做高性能检索/全文搜索  </li>
+<li>关系型数据库事务/Join</li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>

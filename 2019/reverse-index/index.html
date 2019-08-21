@@ -75,7 +75,60 @@
 </ol>
 </li>
 </ul>
-<p>正排索引:<br>| 文档Id | 文档内容     |<br>| —— | ———— |<br>| 1      | blue yellow  |<br>| 2      | yellow green |<br>| 3      | yellow red   |<br>倒排索引:<br>| Term   | Count | DocumentId:Postition |<br>| —— | —– | ——————– |<br>| yellow | 3     | 1:1,2:0,3:0          |<br>| blue   | 1     | 1:0                  |<br>| green  | 1     | 2:1                  |<br>| red    | 1     | 3:1                  |</p>
+<p>正排索引:  </p>
+<table>
+<thead>
+<tr>
+<th>文档Id</th>
+<th>文档内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>blue yellow</td>
+</tr>
+<tr>
+<td>2</td>
+<td>yellow green</td>
+</tr>
+<tr>
+<td>3</td>
+<td>yellow red</td>
+</tr>
+<tr>
+<td>倒排索引:</td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Count</th>
+<th>DocumentId:Postition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>yellow</td>
+<td>3</td>
+<td>1:1,2:0,3:0</td>
+</tr>
+<tr>
+<td>blue</td>
+<td>1</td>
+<td>1:0</td>
+</tr>
+<tr>
+<td>green</td>
+<td>1</td>
+<td>2:1</td>
+</tr>
+<tr>
+<td>red</td>
+<td>1</td>
+<td>3:1</td>
+</tr>
+</tbody></table>
 <h1 id="倒排索引的组成"><a href="#倒排索引的组成" class="headerlink" title="倒排索引的组成"></a>倒排索引的组成</h1><ul>
 <li>单词词典<br>记录所有文档的单词，记录到此到倒排列表的关联关系<br>ps: 单词词典一般很大，通过b+或者哈希拉链法实现，满足其高性能的插入与查询  </li>
 <li>倒排列表<br>记录了单词对应的文档结合，由倒排索引项组成:<ol>
@@ -86,7 +139,27 @@
 </ol>
 </li>
 </ul>
-<p>Demo:Elasticsearch<br>| 文档Id | 文档内容                 |<br>| —— | ———————— |<br>| 1      | Mastering Elasticsearch  |<br>| 2      | Elasticsearch Server     |<br>| 3      | Elasticsearch Essentials |</p>
+<p>Demo:Elasticsearch  </p>
+<table>
+<thead>
+<tr>
+<th>文档Id</th>
+<th>文档内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Mastering Elasticsearch</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Elasticsearch Server</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Elasticsearch Essentials</td>
+</tr>
+</tbody></table>
 <table>
 <thead>
 <tr>

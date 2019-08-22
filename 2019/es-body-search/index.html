@@ -5,12 +5,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>辻字路 - 所学，所感</title>
+    <title>ElasticSearch - 查询语法（Request Body） - 辻字路</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Node.js,"> 
-    
+    <meta name="description" content="只取某些字段(_source)
+脚本字段意思是拼接字段组成新的字段。
+使用表达式查询 - Match
+term查询，即 OR
+phrase查询，即AND
+
+短语搜索 - Match Phrase
+Q,"> 
     <meta name="author" content="Chen.Xu"> 
     <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -30,26 +37,91 @@
 <body class="loading">
     <span id="config-title" style="display:none">辻字路</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                
-                    <div class="set">
-  <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/学习/">学习</a><span class="category-list-count">12</span></li></ul>
-</div>
-
-                
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">ElasticSearch - 查询语法（Request Body）</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">ElasticSearch - 查询语法（Request Body）</h1>
+        <div class="stuff">
+            <span>八月 22, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="只取某些字段-source"><a href="#只取某些字段-source" class="headerlink" title="只取某些字段(_source)"></a>只取某些字段(_source)</h1><p><img src="/img/body1.png" alt="image.png"></p>
+<h1 id="脚本字段"><a href="#脚本字段" class="headerlink" title="脚本字段"></a>脚本字段</h1><p>意思是拼接字段组成新的字段。<br><img src="/img/body2.png" alt="image.png"></p>
+<h1 id="使用表达式查询-Match"><a href="#使用表达式查询-Match" class="headerlink" title="使用表达式查询 - Match"></a>使用表达式查询 - Match</h1><ul>
+<li>term查询，即 OR<br><img src="/img/body3.png" alt="image.png"></li>
+<li>phrase查询，即AND<br><img src="/img/body4.png" alt="image.png"></li>
+</ul>
+<h1 id="短语搜索-Match-Phrase"><a href="#短语搜索-Match-Phrase" class="headerlink" title="短语搜索 - Match Phrase"></a>短语搜索 - Match Phrase</h1><p><img src="/img/body5.png" alt="image.png"></p>
+<h1 id="Query-String-Query"><a href="#Query-String-Query" class="headerlink" title="Query String Query"></a>Query String Query</h1><p>有点类似URI Query<br><img src="/img/body6.png" alt="image.png"><br><img src="/img/body7.png" alt="image.png"></p>
+<h1 id="Simple-Query-String-Query"><a href="#Simple-Query-String-Query" class="headerlink" title="Simple Query String Query"></a>Simple Query String Query</h1><ul>
+<li><p>类似Query String,但是会忽略错误的语法，同时只支持部分查询语法  </p>
+</li>
+<li><p>不支持AND OR NOT,会当作字符串处理  </p>
+</li>
+<li><p>Term之间默认的关系是OR,可以指定Operator  </p>
+</li>
+<li><p>支持部分逻辑  </p>
+<pre><code>+ 替代 AND  
+| 替代 OR  
+- 替代 NOT  </code></pre><p><img src="/img/body8.png" alt="image.png"></p>
+</li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>

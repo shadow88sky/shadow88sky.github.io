@@ -113,7 +113,13 @@ year:(&gt;2010 &amp;&amp; &lt;=2018)
 year:(+&gt;2010 +&lt;=2018)</code></pre></li>
 <li><p>通配符查询(通配符查询效率低，占用内存大，不建议使用。特别是放在最前面)</p>
 <pre><code>?代表1个字符，*代表0或多个字符  
-    1. title</code></pre></li>
+   1. title:mi?d 
+   2. title:be*</code></pre></li>
+<li><p>正则表达  </p>
+<pre><code>titile:[bt]oy</code></pre></li>
+<li><p>模糊匹配与近似查询  </p>
+<pre><code>title: befutifl~1
+title:&quot;lord rings&quot;~2</code></pre></li>
 </ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->

@@ -5,12 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Archive: 2019/8</title>
+    <title>ElasticSearch - Template - 辻字路</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Node.js,"> 
-    
+    <meta name="description" content="Index Template帮助你设定Mapping 和 Settings, 并按照一定的规则，自动匹配到新创建的索引之上。
+
+模版仅在一个索引被新创建时，才会产生作用。修改模版不会影响已创建的索引,"> 
     <meta name="author" content="Chen.Xu"> 
     <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -30,56 +32,90 @@
 <body class="loading">
     <span id="config-title" style="display:none">辻字路</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                    <div class="timeline">
-                      <h2 class="timeline-title">归档: 16篇</h2>
-                      
-                        
-                          <h3 class="timeline-subtitle">2019</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-16</time>
-                          <a target="_self" href="/2019/install/">Docker安装ES,kibana和Cerebro</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-14</time>
-                          <a target="_self" href="/2019/kibana/">Kibana</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-12</time>
-                          <a target="_self" href="/2019/es-简介/">ElasticSearch - 简介</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-09</time>
-                          <a target="_self" href="/2019/ast/">AST</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-07</time>
-                          <a target="_self" href="/2019/typegraphql/">TypeGraphQL</a>
-                        </div>
-                      
-                    </div>
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">ElasticSearch - Template</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">ElasticSearch - Template</h1>
+        <div class="stuff">
+            <span>八月 26, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="Index-Template"><a href="#Index-Template" class="headerlink" title="Index Template"></a>Index Template</h1><p>帮助你设定Mapping 和 Settings, 并按照一定的规则，自动匹配到新创建的索引之上。</p>
+<ul>
+<li>模版仅在一个索引被新创建时，才会产生作用。修改模版不会影响已创建的索引  </li>
+<li>你可以设定多个索引模版，这些设置会被”merge”在一起  </li>
+<li>你可以指定”order”的数值，控制”merging”的过程</li>
+</ul>
+<p>Example:<br><img src="/img/template1.png" alt="image.png"><br>左边的意思是设置所有的索引，主分片和副本都为1。<br>右边是已test开头的索引，主分片为1，副本为2。 属于日期类型的字段不会自动转化成日期类型，数字类型会自动转换。</p>
+<h1 id="Index-Template的工作方式"><a href="#Index-Template的工作方式" class="headerlink" title="Index Template的工作方式"></a>Index Template的工作方式</h1><p>当一个索引被新创建时:</p>
+<ul>
+<li>应用Elasticsearch默认的settings和mappings  </li>
+<li>应用order数值低的Index Template中的设定  </li>
+<li>应用order高的Index Template中的设定，之前的设定会被覆盖  </li>
+<li>应用创建索引时，用户所指定的Settings和Mappings，并覆盖之前模版中的设定</li>
+</ul>
+<h1 id="Dynammic-Template"><a href="#Dynammic-Template" class="headerlink" title="Dynammic Template"></a>Dynammic Template</h1><p> 根据Elasticsearch识别的数据类型，结合字段名称，来动态设定字段类型  </p>
+<ul>
+<li>所有的字符串类型都设定成Keyword,或者关闭Keyword字段 </li>
+<li>is开头的字段都设置成boolean</li>
+<li>long_开头的都设置成long类型<br><img src="/img/template2.png" alt="image.png"></li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>

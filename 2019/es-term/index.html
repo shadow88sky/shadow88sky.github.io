@@ -5,12 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Archive: 2019/8</title>
+    <title>ElasticSearch - term和全文搜索的区别 - 辻字路</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Node.js,"> 
-    
+    <meta name="description" content="Term查询Term是表达语义的最小单位。搜索和利用统计语言模型进行自然语言处理都需要处理Term。
+Term查询的特点
+Term Level Query: Term Query / Range Q,"> 
     <meta name="author" content="Chen.Xu"> 
     <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -30,86 +32,81 @@
 <body class="loading">
     <span id="config-title" style="display:none">辻字路</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                    <div class="timeline">
-                      <h2 class="timeline-title">归档: 17篇</h2>
-                      
-                        
-                          <h3 class="timeline-subtitle">2019</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-27</time>
-                          <a target="_self" href="/2019/es-term/">ElasticSearch - term和全文搜索的区别</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-26</time>
-                          <a target="_self" href="/2019/aggregation/">ElasticSearch - 聚合查询概览</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-26</time>
-                          <a target="_self" href="/2019/es-template/">ElasticSearch - Template</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-22</time>
-                          <a target="_self" href="/2019/mapping/">ElasticSearch - Mapping</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-22</time>
-                          <a target="_self" href="/2019/es-body-search/">ElasticSearch - 查询语法（Request Body）</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-22</time>
-                          <a target="_self" href="/2019/es-uri-search/">ElasticSearch - 查询语法(URI Search)</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-21</time>
-                          <a target="_self" href="/2019/analyzer/">ElasticSearch - 分词</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-21</time>
-                          <a target="_self" href="/2019/firstdrama/">第一次话剧</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-21</time>
-                          <a target="_self" href="/2019/reverse-index/">ElasticSearch - 倒排索引</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-19</time>
-                          <a target="_self" href="/2019/es-curd/">ElasticSearch - 文档的基本操作</a>
-                        </div>
-                      
-                    </div>
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">ElasticSearch - term和全文搜索的区别</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">ElasticSearch - term和全文搜索的区别</h1>
+        <div class="stuff">
+            <span>八月 27, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/ElasticSearch/">ElasticSearch</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="Term查询"><a href="#Term查询" class="headerlink" title="Term查询"></a>Term查询</h1><p>Term是表达语义的最小单位。搜索和利用统计语言模型进行自然语言处理都需要处理Term。</p>
+<h1 id="Term查询的特点"><a href="#Term查询的特点" class="headerlink" title="Term查询的特点"></a>Term查询的特点</h1><ul>
+<li>Term Level Query: Term Query / Range Query / Exists Query / Prefix Query / Wildcard Query </li>
+<li>在ES中，Term查询，对输入不做分词。 会将输入作为一个整体，在倒排索引中查找准确的词项，并且使用相关度算分公式为每个包含该词项的文档进行相关度算分</li>
+<li>可以通过Constant Score将查询转换成一个Filtering，避免算分，并利用缓存，提高性能。<br><img src="/img/term1.png" alt="image.png"><br>我们来看上面一个例子。上面的get查不到数据，可是下面的get却可以查到数据，这是为什么呢？<br>因为插入数据的时候，es已经给我们查入的数据进行过分词了。里面都会转为小写，所以下面的才能查到数据。另外如果需要全匹配，字段可以用column.keyword去查询。<br><img src="/img/term2.png" alt="image.png"><br>另外 我们来看返回结果里面有个_score，它是相关性算分，如果不需要，我们查询语句可以改成下面这样以提高性能:<br><img src="/img/term3.png" alt="image.png"></li>
+</ul>
+<h1 id="全文查询"><a href="#全文查询" class="headerlink" title="全文查询"></a>全文查询</h1><p>基于全文本的查找: Match Query / Match Phrase Query / Query String Query</p>
+<h1 id="全文查询特点"><a href="#全文查询特点" class="headerlink" title="全文查询特点"></a>全文查询特点</h1><ul>
+<li>索引和搜索时都会进行分词，查询字符串先传递到一个合适的分词器，然后生成一个供查询的词项列表  </li>
+<li>查询时候，先会对输入的查询进行分词，然后每个词项逐个进行底层的查询，最终将结果进行合并。并为每个文档生成一个算分。</li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>

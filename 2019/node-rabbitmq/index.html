@@ -74,7 +74,7 @@
 <li>短信发送</li>
 </ul>
 <h1 id="相关概念介绍"><a href="#相关概念介绍" class="headerlink" title="相关概念介绍"></a>相关概念介绍</h1><h2 id="Connection和Channel"><a href="#Connection和Channel" class="headerlink" title="Connection和Channel"></a>Connection和Channel</h2><p>Connection: 是RabbitMQ的socket链接，封装了socket协议相关部分逻辑。<br>Channel: 定义Queue,Exchange,绑定Queue与Exchange,发布消息等。  </p>
-<h2 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h2><p>RabbitMQ中的消息都只能存在Queue中，生产者(P)生产消息并最终投递到Queue中，消费者(C)可以从Queue中获取消息并消费。多个消费者可以订阅同一个Queue，这时候Queue消息会平均分摊给多个消费者处理，而不每个消费者都接收到消息。<br><img src="/img/rabbitmq.png" alt="消费"></p>
+<h2 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h2><p>RabbitMQ中的消息都只能存在Queue中，生产者(P)生产消息并最终投递到Queue中，消费者(C)可以从Queue中获取消息并消费。多个消费者可以订阅同一个Queue，这时候Queue消息会平均分摊给多个消费者处理，而不每个消费者都接收到消息。<br><img src="/img/rabbitmq1.png" alt="消费"></p>
 <h2 id="Message-acknowledgment"><a href="#Message-acknowledgment" class="headerlink" title="Message acknowledgment"></a>Message acknowledgment</h2><p>实际应用中,可能会发生消费者收到Queue中的消息，但没有处理完就宕机的情况，这种情况下就可能会导致消息丢失了。为了避免这种情况发生，我们可以要求消费者在消费完消息后发送一个回执给mq，mq收到回执后才将消息从Queue中删除。<br>PS:千万要发送回执给mq，不然会导致bug– Queue中的消息堆积如山。</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->

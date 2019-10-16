@@ -5,12 +5,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Archive: 2019/8</title>
+    <title>Rabbitmq介绍以及在Node.js中的使用 - 辻字路</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Node.js,"> 
-    
+    <meta name="description" content="使用场景在项目中，将一些无需即时返回且耗时的操作提取出来，进行一步处理，而这种异步处理的方式大大的节省了服务器的请求响应时间，从而提高了吞吐量。Example:  
+
+日志采集  
+报名
+短信发送
+,"> 
     <meta name="author" content="Chen.Xu"> 
     <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -30,80 +35,79 @@
 <body class="loading">
     <span id="config-title" style="display:none">辻字路</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                    <div class="timeline">
-                      <h2 class="timeline-title">归档: 23篇</h2>
-                      
-                        
-                          <h3 class="timeline-subtitle">2019</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-21</time>
-                          <a target="_self" href="/2019/firstdrama/">第一次话剧</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-21</time>
-                          <a target="_self" href="/2019/reverse-index/">ElasticSearch - 倒排索引</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-19</time>
-                          <a target="_self" href="/2019/es-curd/">ElasticSearch - 文档的基本操作</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-19</time>
-                          <a target="_self" href="/2019/es-basic/">ElasticSearch - 基础概念</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-16</time>
-                          <a target="_self" href="/2019/install/">Docker安装ES,kibana和Cerebro</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-14</time>
-                          <a target="_self" href="/2019/kibana/">Kibana</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-12</time>
-                          <a target="_self" href="/2019/es-简介/">ElasticSearch - 简介</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-09</time>
-                          <a target="_self" href="/2019/ast/">AST</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-07</time>
-                          <a target="_self" href="/2019/typegraphql/">TypeGraphQL</a>
-                        </div>
-                      
-                    </div>
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Rabbitmq介绍以及在Node.js中的使用</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">Rabbitmq介绍以及在Node.js中的使用</h1>
+        <div class="stuff">
+            <span>十月 16, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Node-js/">Node.js</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h1><p>在项目中，将一些无需即时返回且耗时的操作提取出来，进行一步处理，而这种异步处理的方式大大的节省了服务器的请求响应时间，从而提高了吞吐量。<br>Example:  </p>
+<ul>
+<li>日志采集  </li>
+<li>报名</li>
+<li>短信发送</li>
+</ul>
+<h1 id="相关概念介绍"><a href="#相关概念介绍" class="headerlink" title="相关概念介绍"></a>相关概念介绍</h1><h2 id="Connection和Channel"><a href="#Connection和Channel" class="headerlink" title="Connection和Channel"></a>Connection和Channel</h2><p>Connection: 是RabbitMQ的socket链接，封装了socket协议相关部分逻辑。<br>Channel: 定义Queue,Exchange,绑定Queue与Exchange,发布消息等。  </p>
+<h2 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h2><p>RabbitMQ中的消息都只能存在Queue中，生产者(P)生产消息并最终投递到Queue中，消费者(C)可以从Queue中获取消息并消费。多个消费者可以订阅同一个Queue，这时候Queue消息会平均分摊给多个消费者处理，而不每个消费者都接收到消息。<br><img src="/img/rabbitmq.png" alt="消费"></p>
+<h2 id="Message-acknowledgment"><a href="#Message-acknowledgment" class="headerlink" title="Message acknowledgment"></a>Message acknowledgment</h2><p>实际应用中,可能会发生消费者收到Queue中的消息，但没有处理完就宕机的情况，这种情况下就可能会导致消息丢失了。为了避免这种情况发生，我们可以要求消费者在消费完消息后发送一个回执给mq，mq收到回执后才将消息从Queue中删除。<br>PS:千万要发送回执给mq，不然会导致bug– Queue中的消息堆积如山。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>

@@ -76,6 +76,36 @@
 <h1 id="相关概念介绍"><a href="#相关概念介绍" class="headerlink" title="相关概念介绍"></a>相关概念介绍</h1><h2 id="Connection和Channel"><a href="#Connection和Channel" class="headerlink" title="Connection和Channel"></a>Connection和Channel</h2><p>Connection: 是RabbitMQ的socket链接，封装了socket协议相关部分逻辑。<br>Channel: 定义Queue,Exchange,绑定Queue与Exchange,发布消息等。  </p>
 <h2 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h2><p>RabbitMQ中的消息都只能存在Queue中，生产者(P)生产消息并最终投递到Queue中，消费者(C)可以从Queue中获取消息并消费。多个消费者可以订阅同一个Queue，这时候Queue消息会平均分摊给多个消费者处理，而不每个消费者都接收到消息。<br><img src="/img/rabbitmq1.png" alt="消费"></p>
 <h2 id="Message-acknowledgment"><a href="#Message-acknowledgment" class="headerlink" title="Message acknowledgment"></a>Message acknowledgment</h2><p>实际应用中,可能会发生消费者收到Queue中的消息，但没有处理完就宕机的情况，这种情况下就可能会导致消息丢失了。为了避免这种情况发生，我们可以要求消费者在消费完消息后发送一个回执给mq，mq收到回执后才将消息从Queue中删除。<br>PS:千万要发送回执给mq，不然会导致bug– Queue中的消息堆积如山。</p>
+<h2 id="Durability"><a href="#Durability" class="headerlink" title="Durability"></a>Durability</h2><p>如果我们希望即使在mq服务重启的情况下，也不会丢失消息，我们可以将queue和message都设置成可持久化(durable)，这样可以保证绝大部分情况下我们的mq消息不会丢失。</p>
+<h2 id="Exchange"><a href="#Exchange" class="headerlink" title="Exchange"></a>Exchange</h2><p>在介绍Queue的时候我们看到生产者将消息投递到Queue中，实际上在mq中这种事情永远不会发生，实际情况是，生产者将消息发送到Exchange，由Exchange将消息路由到一个或者多个Queue中。<br><img src="/img/rabbitmq2.jpg" alt="Exchange"></p>
+<h2 id="routing-key"><a href="#routing-key" class="headerlink" title="routing key"></a>routing key</h2><p>生产者将消息发送给Exchange的时候，一般会指定一个routing key，用来指定这个消息的路由规则，而这个routing key需要与Exchange Type和binding key联合使用才能最终生效。</p>
+<h2 id="binding-key"><a href="#binding-key" class="headerlink" title="binding key"></a>binding key</h2><p>在绑定Exchange与Queue的同时，一般会指定一个binding key;消费者将消息发送给Exchange时，一般会指定一个routing key。当binding key与routing key相匹配时，消息将会被路由到对应的Queue中。<br>在绑定多个Queue到同一个Exchange的时候，这些绑定允许使用同样的binding key,但是并不是在所有情况下都生效，它依赖于Exchange Type，比如fanout类型的Exchange就会无视binding key,而是将消息路由到所有绑定到该Exchage的Queue。</p>
+<h2 id="Exchange-Type"><a href="#Exchange-Type" class="headerlink" title="Exchange Type"></a>Exchange Type</h2><ul>
+<li>fanout<br>会把所有发送到该Exchange的消息路遥到所有与它绑定的Queue中。<br><img src="/img/rabbitmq3.jpg" alt="fanout"></li>
+<li>direct<br>会把消息路由到那些bingding key 和 routing key完全匹配的Queue中  </li>
+<li>topic<br>和direct类似，但是没有direct那么严格,它支持通配符</li>
+<li>header<br>根据发送消息内容中的headers属性进行匹配，一般用的很少，不多做介绍  </li>
+</ul>
+<h1 id="与Kafka对比"><a href="#与Kafka对比" class="headerlink" title="与Kafka对比"></a>与Kafka对比</h1><ul>
+<li><p>应用场景  </p>
+<ul>
+<li>RabbitMQ：用于实时的，对可靠性要求较高的消息传递上。</li>
+<li>kafka：用于处于活跃的流式数据，大数据量的数据处理上。</li>
+</ul>
+</li>
+<li><p>吞吐量方面</p>
+<ul>
+<li>RabbitMQ：支持消息的可靠的传递，支持事务，不支持批量操作，基于存储的可靠性的要求存储可以采用内存或硬盘，吞吐量小。  </li>
+<li>kafka：内部采用消息的批量处理，数据的存储和获取是本地磁盘顺序批量操作，消息处理的效率高，吞吐量高。</li>
+</ul>
+</li>
+<li><p>集群负载均衡方面  </p>
+<ul>
+<li>RabbitMQ：本身不支持负载均衡，需要loadbalancer的支持</li>
+<li>kafka：采用zookeeper对集群中的broker，consumer进行管理，可以注册topic到zookeeper上，通过zookeeper的协调机制，producer保存对应的topic的broker信息，可以随机或者轮询发送到broker上，producer可以基于语义指定分片，消息发送到broker的某个分片上。</li>
+</ul>
+</li>
+</ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">

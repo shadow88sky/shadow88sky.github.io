@@ -104,6 +104,12 @@ app.get(<span class="string">'/server1/timeout'</span>,(req,res)=&gt;{<span clas
 app.listen(port, () =&gt; <span class="built_in">console</span>.log(<span class="string">`Server1 listening on port <span class="subst">${port}</span>`</span>))</code></pre>
 <p>请求网关试试:<br><img src="/img/kong5.jpg" alt="demo1">    </p>
 <p>再来看个请求，我们看下超时和重试:<br><img src="/img/kong6.jpg" alt="demo2"><br>我们发现由于服务端在1s内一直没有返回数据，所以网关重试了5次，最后返回超时。完全符合我们当时设计的逻辑</p>
+<h1 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h1><p><a href="https://docs.konghq.com/1.4.x/admin-api/#add-consumer" target="_blank" rel="noopener">Create Consumer</a>  </p>
+<ul>
+<li>username:  用户名</li>
+<li>custom_id: 用户id(唯一标识，可以存实际数据里面的id)<br><img src="/img/kong7.jpg" alt="demo3">   </li>
+</ul>
+<h1 id="Plugins"><a href="#Plugins" class="headerlink" title="Plugins"></a>Plugins</h1><p>Kong的插件设计十分灵活，即插即用。并且它可以针对service,route也可以针对consumer。<br><a href="https://docs.konghq.com/1.4.x/admin-api/#add-plugin" target="_blank" rel="noopener">Create Plugins</a><br>下来我们来创建一个针对service的basic auth认证插件。<br><img src="/img/kong8.jpg" alt="demo4"><br>然后我们到刚才新建的用户那里创建credentials用于进行basic认证<br><img src="/img/kong9.jpg" alt="demo4"><br>我们再来访问下前面的接口<br><img src="/img/kong10.jpg" alt="demo4"><br>发现现在需要登录认证了</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">

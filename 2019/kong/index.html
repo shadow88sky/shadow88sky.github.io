@@ -73,7 +73,7 @@ Plugins,">
 <li>Plugins: 各种即插即用的插件(例如ACL,Auth,Log等等…)</li>
 <li>Upstreams: 用来做Load Banlance的</li>
 </ul>
-<h1 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h1><p>我们先来看下官方文档:<br><a href="https://docs.konghq.com/1.4.x/admin-api/#add-service" target="_blank" rel="noopener">Create Service</a><br>我们看下里面几个重要的参数:</p>
+<h1 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h1><p>官方文档:<br><a href="https://docs.konghq.com/1.4.x/admin-api/#add-service" target="_blank" rel="noopener">Create Service</a><br>我们看下里面几个重要的参数:</p>
 <ul>
 <li>name: 服务名  </li>
 <li>retries: 失败重试次数  </li>
@@ -81,7 +81,29 @@ Plugins,">
 <li>url: 服务地址  </li>
 <li>read_timeout: 读取服务的超时时间    </li>
 </ul>
-<p>下来我们通过konga来设置一下看看:<br><img src="/img/kong1.jpg" alt="Server-Detail设置"><br><img src="/img/kong2.jpg" alt="Server-Detail设置"></p>
+<p>下来我们通过konga来设置一下看看:<br><img src="/img/kong1.jpg" alt="Server-Detail设置"><br><img src="/img/kong2.jpg" alt="Server-Detail设置"><br>通过上面的图，我们可以看到，实际上就是设置了一个service，指向一个后端的服务，读取超时时间为1s，重试5次。</p>
+<h1 id="Route"><a href="#Route" class="headerlink" title="Route"></a>Route</h1><p>官方文档:<br><a href="https://docs.konghq.com/1.4.x/admin-api/#add-route" target="_blank" rel="noopener">Create Route</a><br>参数说明:  </p>
+<ul>
+<li>name: 路由名称  </li>
+<li>protocol: 该服务支持http还是https,还是都支持。 [“http”,”https”]  </li>
+<li>methods: http方法  </li>
+<li>hosts: 域名  </li>
+<li>paths: 路由规则  </li>
+<li>strip_path: 转发到服务上，是否要截取调path  </li>
+<li>service_id: 服务id<br><img src="/img/kong3.jpg" alt="Route-Detail设置"><br><img src="/img/kong4.jpg" alt="Route-Detail设置">  </li>
+</ul>
+<p>我们设置了path为/server1的get请求规则，并且转发后路由是不截取的。<br>下面我们来看下service的代码:  </p>
+<pre><code class="js"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);
+<span class="keyword">const</span> app = express()
+<span class="keyword">const</span> port = <span class="number">3000</span>
+
+app.get(<span class="string">'/server1/hello'</span>, (req, res) =&gt; res.send(<span class="string">"Hello Server1"</span>));
+
+app.get(<span class="string">'/server1/timeout'</span>,(req,res)=&gt;{<span class="built_in">console</span>.log(<span class="number">1</span>)})
+
+app.listen(port, () =&gt; <span class="built_in">console</span>.log(<span class="string">`Server1 listening on port <span class="subst">${port}</span>`</span>))</code></pre>
+<p>请求网关试试:<br><img src="/img/kong5.jpg" alt="demo1">    </p>
+<p>再来看个请求，我们看下超时和重试:<br><img src="/img/kong6.jpg" alt="demo2"><br>我们发现由于服务端在1s内一直没有返回数据，所以网关重试了5次，最后返回超时。完全符合我们当时设计的逻辑</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">

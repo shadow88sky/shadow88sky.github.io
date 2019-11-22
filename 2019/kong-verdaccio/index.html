@@ -64,36 +64,51 @@
         <div class="content markdown">
             <p>最近公司自己的Npm私有库（verdaccio）需要做一些安全把控。于是就考虑在前面加一层开源网关kong，用来做IP白名单。<br>由于公司开端口太麻烦(原来就只开了80和4873)，所以kong前面还用了Nginx做转发。具体就是远端访问-&gt;Nginx-&gt;Kong-&gt;Verdaccio,本想着很简单，可是一路也碰到了很多坑，特此记录下。 为什么不在nginx上直接做，因为每次开白名单还要去改nginx再重启太麻烦啦，直接在kong上面配配多舒坦。<br>关于kong和verdaccio的安装就不在这里多过阐述了，下面进入正题。 </p>
 <h1 id="verdaccio配置转发"><a href="#verdaccio配置转发" class="headerlink" title="verdaccio配置转发"></a>verdaccio配置转发</h1><p>首先先看verdaccio的官网，如何配置转发:<br><a href="https://verdaccio.org/docs/en/reverse-proxy#sub-directory" target="_blank" rel="noopener">Nginx配置</a>  </p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    proxy_pass http:<span class="comment">//127.0.0.1:4873/;</span></span><br><span class="line">    proxy_set_header Host            $host:$server_port;</span><br><span class="line">    proxy_set_header X-Forwarded-For $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-Proto $scheme;</span><br><span class="line">&#125;</span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">这里有一个着重点，就是Host，我们来看官网说明:  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>  </span><br><span class="line">    If you run verdaccio behind reverse proxy, you may noticed all resource file served <span class="keyword">as</span> relaticve path, like http:<span class="comment">//127.0.0.1:4873/-/static</span></span><br><span class="line">    To resolve <span class="keyword">this</span> issue, you should send real domain and port to verdaccio <span class="keyword">with</span> Host header  </span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">实际上Host就是用来将相对路径前缀改掉。  </span></span><br><span class="line"><span class="string">既然知道怎么修改了，那么我们就来修改我们的kong配置，用同样的方式来进行转发就可以了。</span></span><br><span class="line"><span class="string">首先创建一个service，指向verdaccio。  </span></span><br><span class="line"><span class="string">![service配置](/img/ver1.jpg)  </span></span><br><span class="line"><span class="string">由于kong是在docker里面搭建的，所以host指向的是宿主机docker0的网桥地址，而端口是指向4872(我们把verdaccio的启动时的端口改为4872)</span></span><br><span class="line"><span class="string">![route配置](/img/ver2.jpg)  </span></span><br><span class="line"><span class="string">service和router配置完了，我们来添加request transformer插件，该插件是用来在request中，更改信息的。由于上面说了，指向verdaccio是需要配置header里面的host的，所以配置如下:  </span></span><br><span class="line"><span class="string">![request transformer配置](/img/ver2.jpg)  </span></span><br><span class="line"><span class="string">这样我们的verdaccio的转发就配置完成了。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># Nginx转发到Kong</span></span><br></pre></td></tr></table></figure>
-
-<p>server {<br>    listen 4873;<br>    location / {<br>        proxy_pass <a href="http://localhost:8010/" target="_blank" rel="noopener">http://localhost:8010/</a>;<br>        proxy_set_header X-Real-Port $remote_port;<br>        proxy_set_header X-Real-Ip $remote_addr;<br>        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;<br>        proxy_set_header X-Forwarded-Proto $scheme;<br>    }<br>}</p>
-<pre><code>
-proxy_pass是指向Kong,X-Real-Port,X-Real-Ip,X-Forwarded-For是用来转发真实IP用的也是必要。  
-
-# Kong配置IP白名单  
-* 添加ip-restriction插件 
-![ip插件](/img/ver4.jpg)
-
-* Kong修改配置
-插件配置完后，发现IP白名单不起作用，这时候需要修改配置，如果是docker启动，启动命令请添加KONG_TRUSTED_IPS和KONG_REAL_IP_HEADER，如下:  
-
-```js
-docker run -d --name kong \
--e &quot;KONG_TRUSTED_IPS=0.0.0.0/0,::/0&quot; \
--e &quot;KONG_REAL_IP_HEADER=X-Forwarded-For&quot; \
--e &quot;KONG_DATABASE=postgres&quot; \
--e &quot;KONG_PG_HOST=192.168.1.94&quot;  \
--e &quot;KONG_CASSANDRA_CONTACT_POINTS=kong-database&quot; \
--e &quot;KONG_PROXY_ACCESS_LOG=logs/proxy_access.log&quot;  \
--e &quot;KONG_ADMIN_ACCESS_LOG=logs/admin_access.log&quot; \
--e &quot;KONG_PROXY_ERROR_LOG=logs/proxy_error.log&quot; \
--e &quot;KONG_ADMIN_ERROR_LOG=logs/admin_error.log&quot; \
--e &quot;KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl&quot; \
--p 8000:8000  \
--p 8443:8443  \
--p 8001:8001  \
--p 8444:8444  \
-kong:latest</code></pre><p><a href="https://zhuanlan.zhihu.com/p/68517991" target="_blank" rel="noopener">具体原因请参考</a></p>
+<pre><code class="js">location / {
+    proxy_pass http:<span class="comment">//127.0.0.1:4873/;</span>
+    proxy_set_header Host            $host:$server_port;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}</code></pre>
+<p>这里有一个着重点，就是Host，我们来看官网说明:  </p>
+<pre><code>If you run verdaccio behind reverse proxy, you may noticed all resource file served as relaticve path, like http://127.0.0.1:4873/-/static
+To resolve this issue, you should send real domain and port to verdaccio with Host header  </code></pre><p>实际上Host就是用来将相对路径前缀改掉。<br>既然知道怎么修改了，那么我们就来修改我们的kong配置，用同样的方式来进行转发就可以了。<br>首先创建一个service，指向verdaccio。<br><img src="/img/ver1.jpg" alt="service配置"><br>由于kong是在docker里面搭建的，所以host指向的是宿主机docker0的网桥地址，而端口是指向4872(我们把verdaccio的启动时的端口改为4872)<br><img src="/img/ver2.jpg" alt="route配置"><br>service和router配置完了，我们来添加request transformer插件，该插件是用来在request中，更改信息的。由于上面说了，指向verdaccio是需要配置header里面的host的，所以配置如下:<br><img src="/img/ver2.jpg" alt="request transformer配置"><br>这样我们的verdaccio的转发就配置完成了。</p>
+<h1 id="Nginx转发到Kong"><a href="#Nginx转发到Kong" class="headerlink" title="Nginx转发到Kong"></a>Nginx转发到Kong</h1><pre><code class="js">
+server {
+    listen <span class="number">4873</span>;
+    location / {
+        proxy_pass http:<span class="comment">//localhost:8010/;</span>
+        proxy_set_header X-Real-Port $remote_port;
+        proxy_set_header X-Real-Ip $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}  
+</code></pre>
+<p>proxy_pass是指向Kong,X-Real-Port,X-Real-Ip,X-Forwarded-For是用来转发真实IP用的也是必要。  </p>
+<h1 id="Kong配置IP白名单"><a href="#Kong配置IP白名单" class="headerlink" title="Kong配置IP白名单"></a>Kong配置IP白名单</h1><ul>
+<li><p>添加ip-restriction插件<br><img src="/img/ver4.jpg" alt="ip插件"></p>
+</li>
+<li><p>Kong修改配置<br>插件配置完后，发现IP白名单不起作用，这时候需要修改配置，如果是docker启动，启动命令请添加KONG_TRUSTED_IPS和KONG_REAL_IP_HEADER，如下:  </p>
+</li>
+</ul>
+<pre><code class="js">docker run -d --name kong \
+-e <span class="string">"KONG_TRUSTED_IPS=0.0.0.0/0,::/0"</span> \
+-e <span class="string">"KONG_REAL_IP_HEADER=X-Forwarded-For"</span> \
+-e <span class="string">"KONG_DATABASE=postgres"</span> \
+-e <span class="string">"KONG_PG_HOST=192.168.1.94"</span>  \
+-e <span class="string">"KONG_CASSANDRA_CONTACT_POINTS=kong-database"</span> \
+-e <span class="string">"KONG_PROXY_ACCESS_LOG=logs/proxy_access.log"</span>  \
+-e <span class="string">"KONG_ADMIN_ACCESS_LOG=logs/admin_access.log"</span> \
+-e <span class="string">"KONG_PROXY_ERROR_LOG=logs/proxy_error.log"</span> \
+-e <span class="string">"KONG_ADMIN_ERROR_LOG=logs/admin_error.log"</span> \
+-e <span class="string">"KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl"</span> \
+-p <span class="number">8000</span>:<span class="number">8000</span>  \
+-p <span class="number">8443</span>:<span class="number">8443</span>  \
+-p <span class="number">8001</span>:<span class="number">8001</span>  \
+-p <span class="number">8444</span>:<span class="number">8444</span>  \
+kong:latest</code></pre>
+<p><a href="https://zhuanlan.zhihu.com/p/68517991" target="_blank" rel="noopener">具体原因请参考</a></p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">

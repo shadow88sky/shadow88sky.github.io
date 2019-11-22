@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="zh" class="loading">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>通过Kong来做NPM私有库(verdaccio)的IP限制访问 - 辻字路</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Node.js,"> 
+    <meta name="description" content="最近公司自己的Npm私有库（verdaccio）需要做一些安全把控。于是就考虑在前面加一层开源网关kong，用来做IP白名单。由于公司开端口太麻烦(原来就只开了80和4873)，所以kong前面还用,"> 
+    <meta name="author" content="Chen.Xu"> 
+    <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">辻字路</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">通过Kong来做NPM私有库(verdaccio)的IP限制访问</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">通过Kong来做NPM私有库(verdaccio)的IP限制访问</h1>
+        <div class="stuff">
+            <span>十一月 21, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Kong/">Kong</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>最近公司自己的Npm私有库（verdaccio）需要做一些安全把控。于是就考虑在前面加一层开源网关kong，用来做IP白名单。<br>由于公司开端口太麻烦(原来就只开了80和4873)，所以kong前面还用了Nginx做转发。具体就是远端访问-&gt;Nginx-&gt;Kong-&gt;Verdaccio,本想着很简单，可是一路也碰到了很多坑，特此记录下。 为什么不在nginx上直接做，因为每次开白名单还要去改nginx再重启太麻烦啦，直接在kong上面配配多舒坦。<br>关于kong和verdaccio的安装就不在这里多过阐述了，下面进入正题。 </p>
+<h1 id="verdaccio配置转发"><a href="#verdaccio配置转发" class="headerlink" title="verdaccio配置转发"></a>verdaccio配置转发</h1><p>首先先看verdaccio的官网，如何配置转发:<br><a href="https://verdaccio.org/docs/en/reverse-proxy#sub-directory" target="_blank" rel="noopener">Nginx配置</a>  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    proxy_pass http:<span class="comment">//127.0.0.1:4873/;</span></span><br><span class="line">    proxy_set_header Host            $host:$server_port;</span><br><span class="line">    proxy_set_header X-Forwarded-For $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-Proto $scheme;</span><br><span class="line">&#125;</span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">这里有一个着重点，就是Host，我们来看官网说明:  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    If you run verdaccio behind reverse proxy, you may noticed all resource file served as relaticve path, like http://127.0.0.1:4873/-/static</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    To resolve this issue, you should send real domain and port to verdaccio with Host header  </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">实际上Host就是用来将相对路径前缀改掉。  </span></span><br><span class="line"><span class="string">既然知道怎么修改了，那么我们就来修改我们的kong配置，用同样的方式来进行转发就可以了。</span></span><br><span class="line"><span class="string">首先创建一个service，指向verdaccio。  </span></span><br><span class="line"><span class="string">![service配置](/img/ver1.jpg)  </span></span><br><span class="line"><span class="string">由于kong是在docker里面搭建的，所以host指向的是宿主机docker0的网桥地址，而端口是指向4872(我们把verdaccio的启动时的端口改为4872)</span></span><br><span class="line"><span class="string">![route配置](/img/ver2.jpg)  </span></span><br><span class="line"><span class="string">service和router配置完了，我们来添加request transformer插件，该插件是用来在request中，更改信息的。由于上面说了，指向verdaccio是需要配置header里面的host的，所以配置如下:  </span></span><br><span class="line"><span class="string">![request transformer配置](/img/ver2.jpg)  </span></span><br><span class="line"><span class="string">这样我们的verdaccio的转发就配置完成了。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># Nginx转发到Kong</span></span><br></pre></td></tr></table></figure>
+
+<p>server {<br>    listen 4873;<br>    location / {<br>        proxy_pass <a href="http://localhost:8010/" target="_blank" rel="noopener">http://localhost:8010/</a>;<br>        proxy_set_header X-Real-Port $remote_port;<br>        proxy_set_header X-Real-Ip $remote_addr;<br>        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;<br>        proxy_set_header X-Forwarded-Proto $scheme;<br>    }<br>}</p>
+<pre><code>proxy_pass是指向Kong,X-Real-Port,X-Real-Ip,X-Forwarded-For是用来转发真实IP用的也是必要。  
+
+# Kong配置IP白名单  
+* 添加ip-restriction插件 
+![ip插件](/img/ver4.jpg)
+
+* Kong修改配置
+插件配置完后，发现IP白名单不起作用，这时候需要修改配置，如果是docker启动，启动命令请添加KONG_TRUSTED_IPS和KONG_REAL_IP_HEADER，如下:  
+
+```js
+docker run -d --name kong \
+-e &quot;KONG_TRUSTED_IPS=0.0.0.0/0,::/0&quot; \
+-e &quot;KONG_REAL_IP_HEADER=X-Forwarded-For&quot; \
+-e &quot;KONG_DATABASE=postgres&quot; \
+-e &quot;KONG_PG_HOST=192.168.1.94&quot;  \
+-e &quot;KONG_CASSANDRA_CONTACT_POINTS=kong-database&quot; \
+-e &quot;KONG_PROXY_ACCESS_LOG=logs/proxy_access.log&quot;  \
+-e &quot;KONG_ADMIN_ACCESS_LOG=logs/admin_access.log&quot; \
+-e &quot;KONG_PROXY_ERROR_LOG=logs/proxy_error.log&quot; \
+-e &quot;KONG_ADMIN_ERROR_LOG=logs/admin_error.log&quot; \
+-e &quot;KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl&quot; \
+-p 8000:8000  \
+-p 8443:8443  \
+-p 8001:8001  \
+-p 8444:8444  \
+kong:latest</code></pre><p><a href="https://zhuanlan.zhihu.com/p/68517991" target="_blank" rel="noopener">具体原因请参考</a></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-146598543-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>

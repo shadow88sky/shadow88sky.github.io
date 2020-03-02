@@ -5,12 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Archive: 2019/8</title>
+    <title>mysql基础 - 辻字路</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Node.js,"> 
-    
+    <meta name="description" content="今天看了篇文章，简单记录下。
+Mysql基本架构
+连接器我们要进行查询，第一步就是先去链接数据库，那这个时候就是连接器跟我们对接。
+他负责跟客户端建立链接、获取权限、维持和管理连接。
+链接的时候会经,"> 
     <meta name="author" content="Chen.Xu"> 
     <link rel="alternative" href="atom.xml" title="辻字路" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -30,86 +34,87 @@
 <body class="loading">
     <span id="config-title" style="display:none">辻字路</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                    <div class="timeline">
-                      <h2 class="timeline-title">归档: 31篇</h2>
-                      
-                        
-                          <h3 class="timeline-subtitle">2019</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-28</time>
-                          <a target="_self" href="/2019/es-query-score/">ElasticSearch - 查询打分控制</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-27</time>
-                          <a target="_self" href="/2019/es-score/">ElasticSearch - 搜索的相关性算分</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-27</time>
-                          <a target="_self" href="/2019/es-struct/">ElasticSearch - 结构化搜索</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-27</time>
-                          <a target="_self" href="/2019/es-term/">ElasticSearch - term和全文搜索的区别</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-26</time>
-                          <a target="_self" href="/2019/aggregation/">ElasticSearch - 聚合查询概览</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-26</time>
-                          <a target="_self" href="/2019/es-template/">ElasticSearch - Template</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-22</time>
-                          <a target="_self" href="/2019/mapping/">ElasticSearch - Mapping</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-22</time>
-                          <a target="_self" href="/2019/es-body-search/">ElasticSearch - 查询语法（Request Body）</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-22</time>
-                          <a target="_self" href="/2019/es-uri-search/">ElasticSearch - 查询语法(URI Search)</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-08-21</time>
-                          <a target="_self" href="/2019/analyzer/">ElasticSearch - 分词</a>
-                        </div>
-                      
-                    </div>
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://shadow88sky.github.io"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">mysql基础</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">mysql基础</h1>
+        <div class="stuff">
+            <span>三月 02, 2020</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Mysql/">Mysql</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>今天看了篇文章，简单记录下。</p>
+<h1 id="Mysql基本架构"><a href="#Mysql基本架构" class="headerlink" title="Mysql基本架构"></a>Mysql基本架构</h1><p><img src="/img/mysql1.jpg" alt="mysql.jpg"></p>
+<h1 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h1><pre><code>我们要进行查询，第一步就是先去链接数据库，那这个时候就是连接器跟我们对接。
+他负责跟客户端建立链接、获取权限、维持和管理连接。
+链接的时候会经过TCP握手，然后身份验证，然后我们输入用户名密码就好了。
+验证ok后，我们就连上了这个MySQL服务了，但是这个时候我们处于空闲状态。</code></pre><ul>
+<li><p>查看空闲列表</p>
+<pre><code>show processlist</code></pre></li>
+<li><p>连接器默认时长为8小时。超过时间就会断开，需要重新链接</p>
+</li>
+</ul>
+<h1 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h1><p>缓存命中很难，因为表基本都需要更新。mysql8.0之后就取消了。</p>
+<h1 id="词法分析"><a href="#词法分析" class="headerlink" title="词法分析"></a>词法分析</h1><p>在缓存没有命中的情况下，就开始执行语句了，你写的语句有没有语法错误，这是接下来MySQL比较关心的点。<br>那他会怎么做呢？会先做词法分析，你的语句有这么多单词、空格，MySQL就需要识别每个字符串所代表的是什么，是关键字，还是表名，还是列名等等。<br>然后就开始语法分析，根据词法分析的结果，语法分析会判断你sql的对错，错了会提醒你的，并且会提示你哪里错了。</p>
+<h1 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h1><p>优化就比较简单了，因为我们建立表可能会建立很多索引，优化有一步就是要确认使用哪个索引，比如使用你的主键索引，联合索引还是什么索引更好。</p>
+<p>还有就是对执行顺序进行优化，条件那么多，先查哪个表，还是先关联，会出现很多方案，最后由优化器决定选用哪种方案。</p>
+<h1 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h1><p>最后的步骤</p>
+<p>参考: <a href="https://juejin.im/post/5e3c21105188254901605b0d" target="_blank" rel="noopener">数据库基础</a></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='https://link.hhtjim.com/163/28456751.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='e6328ffa344ee547f289'
+        data-cs='d0cac3af8b3737a24dcc91e70456ec3bc491a123'
+        data-r='shadow88sky.github.io'
+        data-o='shadow88sky'
+        data-a='shadow88sky'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
